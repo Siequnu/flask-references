@@ -13,7 +13,7 @@ from app.references.forms import ReferencePasswordForm, StudentReferenceForm
 
 
 # Log-in gateway to access the references portal
-@bp.route("/gateway", methods=['GET', 'POST'])
+@bp.route("/", methods=['GET', 'POST'])
 def references_login():
 	if current_user.is_authenticated and app.models.is_admin(current_user.username):
 		return redirect (url_for('references.view_references'))
