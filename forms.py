@@ -6,8 +6,8 @@ from app.models import Turma
 	
 	
 class StudentReferenceForm(FlaskForm):
-	student_info = SelectField('Who are you writing the reference for?', coerce=int, validators=[DataRequired()])
 	referee_name = StringField('Your name:', validators=[DataRequired()])
+	student_name = StringField('Student name:', validators=[DataRequired()])
 	referee_position = StringField('What is your relation to the student?', validators=[DataRequired()])
 	school_information = TextAreaField('School information:', validators=[DataRequired()])
 	suitability = TextAreaField('Student suitability:', validators=[DataRequired()])
