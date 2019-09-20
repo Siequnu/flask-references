@@ -21,6 +21,13 @@ def references_login():
 		return redirect (url_for('references.view_references'))
 	form = ReferencePasswordForm()
 	return render_template('references/references_login.html', title = 'Log-in to references', form=form)
+
+# Administrator log-in redirect function
+@bp.route("/login/admin")
+@login_required
+def admin_references_login():
+	return redirect (url_for('references.view_references'))
+	
 	
 
 # Compose a reference
