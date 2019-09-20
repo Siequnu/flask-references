@@ -27,14 +27,12 @@ def references_login():
 @login_required
 def admin_references_login():
 	return redirect (url_for('references.view_references'))
-	
-	
 
 # Compose a reference
-@bp.route("/compose", methods=['POST'])
+@bp.route("/compose", methods=['GET', 'POST'])
 def compose_reference():
 	form = StudentReferenceForm()
-	if request.values.get('password') and request.values.get('password') in current_app.config['SIGNUP_CODES']:	
+	if request.values.get('password') and request.values.get('password') in current_app.config['SIGNUP_CODES'] or current_user.is_authenticated and app.models.is_admin(current_user.username):	
 		return render_template('references/compose_reference.html', title = 'Submit student reference', form=form)
 	abort (403)
 
