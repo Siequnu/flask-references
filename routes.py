@@ -11,6 +11,8 @@ import json
 from app.references import bp
 from app.references.forms import ReferencePasswordForm, StudentReferenceForm
 
+from flask_weasyprint import HTML, render_pdf
+
 
 # Log-in gateway to access the references portal
 @bp.route("/", methods=['GET', 'POST'])
@@ -84,3 +86,24 @@ def delete_reference(reference_id):
 							   title='Delete reference',
 							   confirmation_message = confirmation_message,
 							   form=form)
+	
+
+@bp.route('/view/pdf')
+def reference_pdf(data, user, reference):
+	return render_template('references/pdf_reference.html', data = data, user = user, reference = reference)
+	
+@bp.route('/view/pdf/<reference_id>', methods=['GET', 'POST'])
+@login_required
+def view_statement_pdf(reference_id):
+	try:
+		reference = ReferenceUpload.query.get(reference_id)
+	except:
+		abort (404)
+	user = User.query.get(reference.student_id)
+	form = StudentReferenceForm(obj=reference)
+	del form.submit # Don't show submit button on printed form
+	del form.student_info
+	del form.referee_name
+	del form.referee_position
+	html = reference_pdf(data = form.data, user = user, reference = reference)
+	return render_pdf (HTML(string=html))
