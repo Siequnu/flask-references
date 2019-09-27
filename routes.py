@@ -63,7 +63,11 @@ def submit_reference():
 def view_references():
 	if current_user.is_authenticated and app.models.is_admin(current_user.username):
 		references = db.session.query(ReferenceUpload).all()
-		return render_template('references/view_references.html', title = 'View references', references = references)
+		return render_template('references/view_references.html',
+							   title = 'View references',
+							   student_count = app.user.models.get_total_user_count(),
+							   classes = app.assignments.models.get_all_class_info(),
+							   references = references)
 	
 # View completed student reference
 @bp.route("/view/<reference_id>")
@@ -104,12 +108,12 @@ def view_reference_project(reference_id):
 @bp.route('/download/version/<reference_version_id>')
 @login_required
 def download_reference_version(reference_version_id):
-	try:
-		reference_version = ReferenceVersionUpload.query.get(reference_version_id)
-	except:
-		flash ('This reference version could not be found.', 'error')
-		return redirect(url_for('references.view_references'))
 	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		try:
+			reference_version = ReferenceVersionUpload.query.get(reference_version_id)
+		except:
+			flash ('This reference version could not be found.', 'error')
+			return redirect(url_for('references.view_references'))
 		return app.references.models.download_reference_version(reference_version_id)
 	abort (403)
 
@@ -182,24 +186,28 @@ def delete_reference(reference_id):
 
 @bp.route('/view/pdf')
 def reference_pdf(data, reference, contact_information):
-	return render_template('references/pdf_reference.html',
+	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		return render_template('references/pdf_reference.html',
 						   data = data,
 						   reference = reference,
 						   contact_information = contact_information)
+	abort (403)
 	
 @bp.route('/view/pdf/<reference_id>', methods=['GET', 'POST'])
 @login_required
 def view_statement_pdf(reference_id):
-	try:
-		reference = ReferenceUpload.query.get(reference_id)
-	except:
-		abort (404)
-	form = StudentReferenceForm(obj=reference)
-	form_contents = json.loads(reference.form_contents)
-	contact_information = form_contents.get('contact_information')
-	del form.submit # Don't show submit button on printed form
-	del form.referee_name
-	del form.referee_position
-	del form.contact_information
-	html = reference_pdf(data = form.data, reference = reference, contact_information = contact_information)
-	return render_pdf (HTML(string=html))
+	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		try:
+			reference = ReferenceUpload.query.get(reference_id)
+		except:
+			abort (404)
+		form = StudentReferenceForm(obj=reference)
+		form_contents = json.loads(reference.form_contents)
+		contact_information = form_contents.get('contact_information')
+		del form.submit # Don't show submit button on printed form
+		del form.referee_name
+		del form.referee_position
+		del form.contact_information
+		html = reference_pdf(data = form.data, reference = reference, contact_information = contact_information)
+		return render_pdf (HTML(string=html))
+	abort (403)
