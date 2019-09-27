@@ -71,7 +71,9 @@ def view_references():
 def view_completed_reference(reference_id):
 	if current_user.is_authenticated and app.models.is_admin(current_user.username):
 		reference = ReferenceUpload.query.get(reference_id)
+		form_contents = json.loads(reference.form_contents)
 		form = StudentReferenceForm(obj=reference)
+		form.contact_information.data = form_contents.get('contact_information')
 		return render_template('references/view_completed_reference.html', title = 'View completed reference', reference = reference, form = form)
 	
 # View version history of a reference
@@ -81,6 +83,10 @@ def view_reference_project(reference_id):
 	if current_user.is_authenticated and app.models.is_admin(current_user.username):
 		original_reference = ReferenceUpload.query.get(reference_id)
 		form = StudentReferenceForm(obj=original_reference)
+		# Load form_contents, although alot of information is held in duplicate columns
+		form_contents = json.loads(original_reference.form_contents)
+		contact_information = form_contents.get('contact_information')
+		
 		reference_project_uploads = db.session.query(ReferenceVersionUpload, User).join(User, ReferenceVersionUpload.user_id==User.id).filter(ReferenceVersionUpload.original_reference_id==reference_id).all()
 		reference_project_array = []
 		for reference, user in reference_project_uploads:
@@ -91,7 +97,7 @@ def view_reference_project(reference_id):
 							   title = 'View reference project',
 							   original_reference = original_reference,
 							   reference_project_array = reference_project_array,
-							   form = form,
+							   form_contents = form_contents,
 							   reference_id = reference_id)
 	
 
@@ -175,8 +181,11 @@ def delete_reference(reference_id):
 	
 
 @bp.route('/view/pdf')
-def reference_pdf(data, reference):
-	return render_template('references/pdf_reference.html', data = data, reference = reference)
+def reference_pdf(data, reference, contact_information):
+	return render_template('references/pdf_reference.html',
+						   data = data,
+						   reference = reference,
+						   contact_information = contact_information)
 	
 @bp.route('/view/pdf/<reference_id>', methods=['GET', 'POST'])
 @login_required
@@ -186,8 +195,11 @@ def view_statement_pdf(reference_id):
 	except:
 		abort (404)
 	form = StudentReferenceForm(obj=reference)
+	form_contents = json.loads(reference.form_contents)
+	contact_information = form_contents.get('contact_information')
 	del form.submit # Don't show submit button on printed form
 	del form.referee_name
 	del form.referee_position
-	html = reference_pdf(data = form.data, reference = reference)
+	del form.contact_information
+	html = reference_pdf(data = form.data, reference = reference, contact_information = contact_information)
 	return render_pdf (HTML(string=html))

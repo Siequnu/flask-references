@@ -9,6 +9,7 @@ class StudentReferenceForm(FlaskForm):
 	referee_name = StringField('Your name:', validators=[DataRequired()])
 	student_name = StringField('Student name:', validators=[DataRequired()])
 	referee_position = StringField('What is your relation to the student?', validators=[DataRequired()])
+	contact_information = TextAreaField('Your (school) email and phone number:', validators=[DataRequired()])
 	school_information = TextAreaField('School information:', validators=[DataRequired()])
 	suitability = TextAreaField('Student suitability:', validators=[DataRequired()])
 	submit = SubmitField('Submit reference')
