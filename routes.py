@@ -4,12 +4,15 @@ from flask_login import login_required
 
 from app import db
 import app.models
-from app.models import ReferenceUpload, User
 
 import json
+import arrow
+from dateutil import tz
 
-from app.references import bp
-from app.references.forms import ReferencePasswordForm, StudentReferenceForm
+from app.models import ReferenceUpload, ReferenceVersionDownload, ReferenceVersionUpload, User
+
+from app.references import bp, models
+from app.references.forms import ReferencePasswordForm, StudentReferenceForm, EditedReferenceForm
 
 from flask_weasyprint import HTML, render_pdf
 
@@ -70,6 +73,70 @@ def view_completed_reference(reference_id):
 		reference = ReferenceUpload.query.get(reference_id)
 		form = StudentReferenceForm(obj=reference)
 		return render_template('references/view_completed_reference.html', title = 'View completed reference', reference = reference, form = form)
+	
+# View version history of a reference
+@bp.route("/view/project/<reference_id>")
+@login_required
+def view_reference_project(reference_id):
+	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		original_reference = ReferenceUpload.query.get(reference_id)
+		form = StudentReferenceForm(obj=original_reference)
+		reference_project_uploads = db.session.query(ReferenceVersionUpload, User).join(User, ReferenceVersionUpload.user_id==User.id).filter(ReferenceVersionUpload.original_reference_id==reference_id).all()
+		reference_project_array = []
+		for reference, user in reference_project_uploads:
+			reference_dict = reference.__dict__ # Convert SQL Alchemy object into dictionary
+			reference_dict['humanized_timestamp'] = arrow.get(reference_dict['timestamp'], tz.gettz('Asia/Hong_Kong')).humanize()
+			reference_project_array.append([reference_dict, user])
+		print (reference_project_array)
+		return render_template('references/view_reference_project.html',
+							   title = 'View reference project',
+							   original_reference = original_reference,
+							   reference_project_array = reference_project_array,
+							   form = form,
+							   reference_id = reference_id)
+	
+
+@bp.route('/download/version/<reference_version_id>')
+@login_required
+def download_reference_version(reference_version_id):
+	try:
+		reference_version = ReferenceVersionUpload.query.get(reference_version_id)
+	except:
+		flash ('This reference version could not be found.', 'error')
+		return redirect(url_for('references.view_references'))
+	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		return app.references.models.download_reference_version(reference_version_id)
+	abort (403)
+
+@bp.route('/delete/<reference_version_id>')
+@login_required
+def delete_reference_version(reference_version_id):
+	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		try:
+			reference_version = ReferenceVersionUpload.query.get(reference_version_id)
+			original_reference_id = reference_version.original_reference_id
+		except:
+			flash ('This reference could not be found.', 'error')
+			return redirect(url_for('references.view_references'))
+		if app.references.models.delete_reference_version(reference_version_id):
+			flash ('Successfully deleted the reference version', 'success')
+			return redirect(url_for('references.view_reference_project', reference_id = original_reference_id))
+		else:
+			flash ('This reference could not be deleted.', 'error')
+			return redirect(url_for('references.view_references'))
+	abort (403)
+
+# Submit reference version
+@bp.route("/<original_reference_id>/version/upload", methods=['GET', 'POST'])
+def upload_new_reference_version (original_reference_id):
+	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		form = EditedReferenceForm ()
+		if form.validate_on_submit():
+			app.references.models.new_reference_version_from_form(form, original_reference_id)
+			flash('New reference version successfully added library!', 'success')
+			return redirect(url_for('references.view_references'))
+		return render_template('references/upload_reference_version.html', title='Upload reference version', form=form)
+	abort (403)
 	
 # Delete a student reference
 @bp.route("/delete/<reference_id>", methods=['GET', 'POST'])

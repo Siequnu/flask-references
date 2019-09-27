@@ -16,3 +16,8 @@ class StudentReferenceForm(FlaskForm):
 class ReferencePasswordForm(FlaskForm):
 	password = StringField('Log-in code:', validators=[DataRequired()])
 	submit = SubmitField('Submit a reference...')
+	
+class EditedReferenceForm(FlaskForm):
+	reference_upload_file= FileField(label='File:')
+	description = StringField('Notes:')
+	submit = SubmitField('Upload new reference')
