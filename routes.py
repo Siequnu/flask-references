@@ -87,7 +87,6 @@ def view_reference_project(reference_id):
 			reference_dict = reference.__dict__ # Convert SQL Alchemy object into dictionary
 			reference_dict['humanized_timestamp'] = arrow.get(reference_dict['timestamp'], tz.gettz('Asia/Hong_Kong')).humanize()
 			reference_project_array.append([reference_dict, user])
-		print (reference_project_array)
 		return render_template('references/view_reference_project.html',
 							   title = 'View reference project',
 							   original_reference = original_reference,
@@ -108,7 +107,7 @@ def download_reference_version(reference_version_id):
 		return app.references.models.download_reference_version(reference_version_id)
 	abort (403)
 
-@bp.route('/delete/<reference_version_id>')
+@bp.route('/delete/version/<reference_version_id>')
 @login_required
 def delete_reference_version(reference_version_id):
 	if current_user.is_authenticated and app.models.is_admin(current_user.username):
@@ -125,6 +124,24 @@ def delete_reference_version(reference_version_id):
 			flash ('This reference could not be deleted.', 'error')
 			return redirect(url_for('references.view_references'))
 	abort (403)
+	
+	
+@bp.route('/delete/project/<reference_id>')
+@login_required
+def delete_reference_project(reference_id):
+	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		try:
+			reference = ReferenceUpload.query.get(reference_id)
+		except:
+			flash ('This reference could not be found.', 'error')
+			return redirect(url_for('references.view_references'))
+		if app.references.models.delete_reference_project(reference_id):
+			flash ('Successfully deleted the reference project', 'success')
+			return redirect(url_for('references.view_references'))
+		else:
+			flash ('This reference could not be deleted.', 'error')
+			return redirect(url_for('references.view_references'))
+	abort (403)
 
 # Submit reference version
 @bp.route("/<original_reference_id>/version/upload", methods=['GET', 'POST'])
@@ -134,7 +151,7 @@ def upload_new_reference_version (original_reference_id):
 		if form.validate_on_submit():
 			app.references.models.new_reference_version_from_form(form, original_reference_id)
 			flash('New reference version successfully added library!', 'success')
-			return redirect(url_for('references.view_references'))
+			return redirect(url_for('references.view_reference_project', reference_id = original_reference_id))
 		return render_template('references/upload_reference_version.html', title='Upload reference version', form=form)
 	abort (403)
 	

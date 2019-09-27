@@ -52,3 +52,13 @@ def delete_reference_version (reference_version_id):
 	except:
 		return False
 	
+
+def delete_reference_project (reference_id):
+	try:
+		ReferenceUpload.query.filter_by(id=reference_id).delete()
+		ReferenceVersionUpload.query.filter_by(original_reference_id=reference_id).delete()
+		db.session.commit()
+		return True
+	except:
+		return False
+	
