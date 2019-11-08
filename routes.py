@@ -62,7 +62,7 @@ def submit_reference():
 @login_required
 def view_references():
 	if current_user.is_authenticated and app.models.is_admin(current_user.username):
-		references = db.session.query(ReferenceUpload).all()
+		references = db.session.query(ReferenceUpload).filter(ReferenceUpload.archived.isnot(True)).all()
 		return render_template('references/view_references.html',
 							   title = 'View references',
 							   student_count = app.user.models.get_total_user_count(),
@@ -152,6 +152,45 @@ def delete_reference_project(reference_id):
 			flash ('This reference could not be deleted.', 'error')
 			return redirect(url_for('references.view_references'))
 	abort (403)
+	
+@bp.route('/archive/project/<reference_id>')
+@login_required
+def archive_reference_project(reference_id):
+	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		try:
+			reference = ReferenceUpload.query.get(reference_id)
+			reference.archived = True
+			flash ('Successfully archived the reference project', 'success')
+		except:
+			flash ('This reference could not be archived.', 'error')
+		return redirect(url_for('references.view_references'))
+	abort (403)
+	
+
+@bp.route('/unarchive/project/<reference_id>')
+@login_required
+def unarchive_reference_project(reference_id):
+	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		try:
+			reference = ReferenceUpload.query.get(reference_id)
+			reference.archived = False
+			flash ('Successfully unarchived the reference project', 'success')
+		except:
+			flash ('This reference could not be unarchived.', 'error')
+		return redirect(url_for('references.view_references'))
+	abort (403)
+	
+# Access archived references
+@bp.route("/archive")
+@login_required
+def view_archived_references():
+	if current_user.is_authenticated and app.models.is_admin(current_user.username):
+		references = db.session.query(ReferenceUpload).filter(ReferenceUpload.archived==True).all()
+		return render_template('references/view_archived_references.html',
+							   title = 'View archived references',
+							   student_count = app.user.models.get_total_user_count(),
+							   classes = app.assignments.models.get_all_class_info(),
+							   references = references)
 
 # Submit reference version
 @bp.route("/<original_reference_id>/version/upload", methods=['GET', 'POST'])
