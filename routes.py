@@ -229,7 +229,8 @@ def reference_pdf(data, reference, contact_information):
 		return render_template('references/pdf_reference.html',
 						   data = data,
 						   reference = reference,
-						   contact_information = contact_information)
+						   contact_information = contact_information,
+						   app_name = current_app.config['APP_NAME'])
 	abort (403)
 	
 @bp.route('/view/pdf/<reference_id>', methods=['GET', 'POST'])
