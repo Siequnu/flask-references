@@ -42,8 +42,8 @@ def compose_reference():
 # Submit reference
 @bp.route("/submit", methods=['POST'])
 def submit_reference():
-	if request.form.get('school_information') and request.form.get('school_information') is not None:
-		form_contents = json.dumps(request.form)
+	if request.form.get('school_information') is not None:
+		form_contents = json.dumps(request.form) # Why is the form being dumped, and also stored as fields?
 		reference = ReferenceUpload(
 			referee_name = request.form.get('referee_name'),
 			student_name = request.form.get('student_name'),
@@ -55,7 +55,7 @@ def submit_reference():
 		db.session.commit()
 		flash ('Your reference was submitted successfully', 'success')
 		return redirect (url_for('main.index'))
-	abort (403)
+	abort (404)
 	
 # Access student references
 @bp.route("/admin")
@@ -68,6 +68,7 @@ def view_references():
 							   student_count = app.user.models.get_total_user_count(),
 							   classes = app.assignments.models.get_all_class_info(),
 							   references = references)
+	abort (403)
 	
 # View completed student reference
 @bp.route("/view/<reference_id>")
@@ -79,6 +80,7 @@ def view_completed_reference(reference_id):
 		form = StudentReferenceForm(obj=reference)
 		form.contact_information.data = form_contents.get('contact_information')
 		return render_template('references/view_completed_reference.html', title = 'View completed reference', reference = reference, form = form)
+	abort (403)
 	
 # View version history of a reference
 @bp.route("/view/project/<reference_id>")
@@ -103,6 +105,7 @@ def view_reference_project(reference_id):
 							   reference_project_array = reference_project_array,
 							   form_contents = form_contents,
 							   reference_id = reference_id)
+	abort (403)
 	
 
 @bp.route('/download/version/<reference_version_id>')
@@ -145,11 +148,14 @@ def delete_reference_project(reference_id):
 		except:
 			flash ('This reference could not be found.', 'error')
 			return redirect(url_for('references.view_references'))
+		if reference is None:
+			flash ('This reference could not be found.', 'error')
+			return redirect(url_for('references.view_references'))
 		if app.references.models.delete_reference_project(reference_id):
 			flash ('Successfully deleted the reference project', 'success')
 			return redirect(url_for('references.view_references'))
 		else:
-			flash ('This reference could not be deleted.', 'error')
+			flash ('This reference project could not be deleted.', 'error')
 			return redirect(url_for('references.view_references'))
 	abort (403)
 	
@@ -160,6 +166,7 @@ def archive_reference_project(reference_id):
 		try:
 			reference = ReferenceUpload.query.get(reference_id)
 			reference.archived = True
+			db.session.commit()
 			flash ('Successfully archived the reference project', 'success')
 		except:
 			flash ('This reference could not be archived.', 'error')
@@ -174,6 +181,7 @@ def unarchive_reference_project(reference_id):
 		try:
 			reference = ReferenceUpload.query.get(reference_id)
 			reference.archived = False
+			db.session.commit()
 			flash ('Successfully unarchived the reference project', 'success')
 		except:
 			flash ('This reference could not be unarchived.', 'error')
@@ -191,6 +199,7 @@ def view_archived_references():
 							   student_count = app.user.models.get_total_user_count(),
 							   classes = app.assignments.models.get_all_class_info(),
 							   references = references)
+	abort (403)
 
 # Submit reference version
 @bp.route("/<original_reference_id>/version/upload", methods=['GET', 'POST'])
@@ -221,6 +230,7 @@ def delete_reference(reference_id):
 							   title='Delete reference',
 							   confirmation_message = confirmation_message,
 							   form=form)
+	abort (403)
 	
 
 @bp.route('/view/pdf')
