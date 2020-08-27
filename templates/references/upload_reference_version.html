@@ -1,20 +1,22 @@
-
 {% extends "header.html" %}
 {% from 'bootstrap/form.html' import render_form %}
-  
+
 {% block app_content %}
 <div class="container">
-<br>
-<div class="card bg-light mb-3" style="max-width: 40rem;">
-  <div class="card-body">
+  <br>
+  <div class="card bg-light mb-3" style="max-width: 40rem;">
+    <div class="card-body">
 
-    <h1>Upload reference version</h1>
-    <hr>
-  <p>Please select the file you want to upload.<br />
-    
-  {{ render_form(form) }}
-   </div>
-</div>
+      <h1>Upload reference version</h1>
+      <hr>
+      <p>Please select the file you want to upload.<br />
 
+      <form method="post" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        {{ render_form(form) }}
+      </form>
+    </div>
   </div>
+
+</div>
 {% endblock %}

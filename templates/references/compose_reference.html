@@ -4,80 +4,96 @@
 {% block app_content %}
 
 <div class="container">
-{% block body %}
+  {% block body %}
 
- <div class="container">
-  <h1>{{title}}</h1>
-  <hr>
-  
-  <form action="{{url_for('references.submit_reference')}}" method="post">
-      {{ form.csrf_token }}
-  
+  <div class="container">
+    <h1>{{title}}</h1>
+    <hr>
+
+    <form action="{{url_for('references.submit_reference')}}" method="post">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
       <div class="card">
-  <div class="card-header">
-    <h5> <i class="fa fa-id-card"></i> Personal information</h5>
-  </div>
-  <div class="card-body">
-     {{render_field(form.student_name)}}
-     {{render_field(form.referee_name)}}
-     {{render_field(form.referee_position)}}
-     {{render_field(form.contact_information)}}
-    </blockquote>
-  </div>
-</div>  
+        <div class="card-header">
+          <h5> <i class="fa fa-id-card"></i> Personal information</h5>
+        </div>
+        <div class="card-body">
+          {{render_field(form.student_name)}}
+          {{render_field(form.referee_name)}}
+          {{render_field(form.referee_position)}}
+          {{render_field(form.contact_information)}}
+          </blockquote>
+        </div>
+      </div>
       <hr>
       <div class="card">
-  <div class="card-header">
-    <h5><i class="fa fa-graduation-cap"></i> School</h5>
-  </div>
-  <div class="card-body">
-    <blockquote class="blockquote mb-0">
-      <p>Include brief details about the school’s/college’s curriculum policy, to include:</p>
-      <footer class="blockquote-footer">Size and type of school/college</cite></footer>
-      <footer class="blockquote-footer">Number of students in student's year group and/or class sizes and the proportion typically progressing to HE</cite></footer>
-      <footer class="blockquote-footer">Typical number and patterns of qualifications taken by students</cite></footer>
-      <footer class="blockquote-footer">Information about school policy such as certification of AS-levels and opportunities to take vocationally related qualifications alongside academic GCEs.</cite></footer>
+        <div class="card-header">
+          <h5><i class="fa fa-graduation-cap"></i> School</h5>
+        </div>
+        <div class="card-body">
+          <blockquote class="blockquote mb-0">
+            <p>Include brief details about the school’s/college’s curriculum policy, to include:</p>
+            <footer class="blockquote-footer">Size and type of school/college</cite></footer>
+            <footer class="blockquote-footer">Number of students in student's year group and/or class sizes and the
+              proportion typically progressing to HE</cite></footer>
+            <footer class="blockquote-footer">Typical number and patterns of qualifications taken by students</cite>
+            </footer>
+            <footer class="blockquote-footer">Information about school policy such as certification of AS-levels and
+              opportunities to take vocationally related qualifications alongside academic GCEs.</cite></footer>
+            <br>
+            <p>Example:</p>
+            <footer class="blockquote-footer"><cite title="Source Title">Our School offers A level and BTEC programmes
+                to students from the local areas. Over 30% of our students receive EMA payments and 25% are from
+                widening participation backgrounds. Our standard pattern is 3 A levels and one AS. All students take a
+                critical thinking module as part of the non-examined General Studies programme</cite></footer>
+            <hr>
+            {{render_field(form.school_information)}}
+          </blockquote>
+        </div>
+      </div>
+
       <br>
-      <p>Example:</p>
-      <footer class="blockquote-footer"><cite title="Source Title">Our School offers A level and BTEC programmes to students from the local areas. Over 30% of our students receive EMA payments and 25% are from widening participation backgrounds. Our standard pattern is 3 A levels and one AS. All students take a critical thinking module as part of the non-examined General Studies programme</cite></footer>
-     <hr>
-     {{render_field(form.school_information)}}
-    </blockquote>
-  </div>
-</div>
-      
-      <br>
-            <div class="card">
-  <div class="card-header">
-    <h5><i class="fa fa-user-graduate"></i> Suitability</h5>
-  </div>
-  <div class="card-body">
-    <blockquote class="blockquote mb-0">
-      <p>The most important part of your reference is your assessment of the applicant's suitability for the higher education courses they have chosen. Consider including the following points:</p>
-      <footer class="blockquote-footer">Existing achievement and details of performance from subject teachers, with particular reference to subjects relating to the courses for which they are applying or any information you might want to add about performance in individual units of qualifications, for example, GCE AS and A levels that the student has not already given in the personal statement.</cite></footer>
-      <footer class="blockquote-footer">all qualifications, e.g. Key Skills, Critical Thinking, General Studies</cite></footer>
-      <footer class="blockquote-footer">their ability to write and speak in English, and indicate if any of their studies were taught in English</cite></footer>
-      <footer class="blockquote-footer">motivation and commitment towards the chosen course(s)</cite></footer>
-      <footer class="blockquote-footer">any relevant skills achievement, whether certificated or not</cite></footer>
-      <footer class="blockquote-footer">potential (other than predicted grades)</cite></footer>
-      <footer class="blockquote-footer">powers of analysis and independent thought</cite></footer>
-      <footer class="blockquote-footer">relevant curriculum enrichment and other activities</cite></footer>
-      <footer class="blockquote-footer">relevant work experience, such as work placements, voluntary work and so on</cite></footer>
-      <footer class="blockquote-footer">proposed career plan and, where relevant, their suitability for training for a particular profession</cite></footer>
-      <footer class="blockquote-footer">any factors, such as personal circumstances, that may have affected, or might affect their performance</cite></footer>
+      <div class="card">
+        <div class="card-header">
+          <h5><i class="fa fa-user-graduate"></i> Suitability</h5>
+        </div>
+        <div class="card-body">
+          <blockquote class="blockquote mb-0">
+            <p>The most important part of your reference is your assessment of the applicant's suitability for the
+              higher education courses they have chosen. Consider including the following points:</p>
+            <footer class="blockquote-footer">Existing achievement and details of performance from subject teachers,
+              with particular reference to subjects relating to the courses for which they are applying or any
+              information you might want to add about performance in individual units of qualifications, for example,
+              GCE AS and A levels that the student has not already given in the personal statement.</cite></footer>
+            <footer class="blockquote-footer">all qualifications, e.g. Key Skills, Critical Thinking, General
+              Studies</cite></footer>
+            <footer class="blockquote-footer">their ability to write and speak in English, and indicate if any of their
+              studies were taught in English</cite></footer>
+            <footer class="blockquote-footer">motivation and commitment towards the chosen course(s)</cite></footer>
+            <footer class="blockquote-footer">any relevant skills achievement, whether certificated or not</cite>
+            </footer>
+            <footer class="blockquote-footer">potential (other than predicted grades)</cite></footer>
+            <footer class="blockquote-footer">powers of analysis and independent thought</cite></footer>
+            <footer class="blockquote-footer">relevant curriculum enrichment and other activities</cite></footer>
+            <footer class="blockquote-footer">relevant work experience, such as work placements, voluntary work and so
+              on</cite></footer>
+            <footer class="blockquote-footer">proposed career plan and, where relevant, their suitability for training
+              for a particular profession</cite></footer>
+            <footer class="blockquote-footer">any factors, such as personal circumstances, that may have affected, or
+              might affect their performance</cite></footer>
+            <hr>
+            {{render_field(form.suitability)}}
+          </blockquote>
+        </div>
+      </div>
       <hr>
-     {{render_field(form.suitability)}}
-    </blockquote>
-  </div>
-</div>
-      <hr>
-      
+
       {{ render_field(form.submit) }}
     </form>
 
   </div>
- 
 
-{% endblock %}
+
+  {% endblock %}
 </div>
 {% endblock %}

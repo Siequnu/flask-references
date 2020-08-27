@@ -4,30 +4,32 @@
 {% block app_content %}
 
 <div class="container">
-{% block body %}
-<br>
- <div class="container">
-  <div class="card bg-light mb-3" style="max-width: 30rem;">
-  <div class="card-body">
-  <h1>{{title}}</h1>
-  <hr>
-  <h4>Please enter the log-in code to submit a reference</h4>
-  <p>This code should be provided to you by the student's tutor.</p>
-  <hr>
-  
-  <form action="{{url_for('references.compose_reference')}}" method="post">
-      {{ render_field(form.password) }}
-      {{ render_field(form.submit) }}
-    </form>
+  {% block body %}
   <br>
-  <hr>
-  <a href="{{url_for('references.admin_references_login')}}" class="btn btn-light btn-sm" role="button"><i class="fa fa-user"></i> Administrator log-in</a>
-  </div>
-   </div>
-</div>
-   
- 
+  <div class="container">
+    <div class="card bg-light mb-3" style="max-width: 30rem;">
+      <div class="card-body">
+        <h1>{{title}}</h1>
+        <hr>
+        <h4>Please enter the log-in code to submit a reference</h4>
+        <p>This code should be provided to you by the student's tutor.</p>
+        <hr>
 
-{% endblock %}
+        <form action="{{url_for('references.compose_reference')}}" method="post">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          {{ render_field(form.password) }}
+          {{ render_field(form.submit) }}
+        </form>
+        <br>
+        <hr>
+        <a href="{{url_for('references.admin_references_login')}}" class="btn btn-light btn-sm" role="button"><i
+            class="fa fa-user"></i> Administrator log-in</a>
+      </div>
+    </div>
+  </div>
+
+
+
+  {% endblock %}
 </div>
 {% endblock %}
