@@ -5,10 +5,9 @@
 {% block app_content %}
 <link rel="stylesheet" href="/static/css/form-control-borderless.css">
 <div class="container">
-  <br>
-  <h1><i class="fa fa-quote-right"></i> References</h1>
-  <hr>
-     <div class="row text-center">
+    <h1><i class="fa fa-quote-right"></i> References</h1>
+    <hr>
+    <div class="row text-center">
         <div class="col">
             <div class="counter">
                 <i class="fa fa-archive fa-2x"></i>
@@ -33,68 +32,78 @@
     </div>
 
 
-<br>
-{% block body %}
- 
-  <a href="{{url_for('references.compose_reference')}}" <button class="btn btn-success"><i class="fa fa-plus-circle"></i> Add reference</button></a>
- <a href="{{url_for('references.view_archived_references')}}" <button class="btn btn-secondary"><i class="fa fa-archive"></i> View reference archive</button></a>
- <br><br>
- 
-  <div class="row justify-content-left">
-                        <div class="col-12 col-md-10 col-lg-8">
-                            <form class="card">
-                                <div class="card-body row no-gutters align-items-center">
-                                    <div class="col-auto">
-                                        <i class="fas fa-search h4 text-body"></i>
-                                    </div>
-                                    <!--end of col-->
-                                    <div class="col">
-                                        <input id="myInput" class="form-control form-control-lg form-control-borderless" type="search" placeholder="Search for students or references">
-                                    </div>
-                                    <!--end of col-->
-                                </div>
-                            </form>
-                        </div>
-                        <!--end of col-->
+    <br>
+    {% block body %}
+
+    <a href="{{url_for('references.compose_reference')}}" <button class="btn btn-lg btn-outline-success"><i
+            class="fa fa-plus-circle"></i> Add reference</button></a>
+    <a href="{{url_for('references.view_archived_references')}}" <button class="btn btn-lg btn-outline-secondary"><i
+            class="fa fa-archive"></i> View reference archive</button></a>
+    <br><br>
+
+    <div class="row justify-content-left">
+        <div class="col-12 col-md-10 col-lg-8">
+            <form class="card">
+                <div class="card-body row no-gutters align-items-center">
+                    <div class="col-auto">
+                        <i class="fas fa-search h4 text-body"></i>
                     </div>
- <br>
-<h3>Student references</h3>   
-      <div class="table-responsive">
-            <table summary="User references table" class="table table-bordered table-hover">
-           <thead>
-              <tr>
-              <th>Student Name</th>
-              <th>Referee</th>
-        		  <th>Actions</th>
-            </tr>
-          </thead>
-		  <tbody id="searchableTable">
-			{% for reference in references %}
-            <tr>
-              <td>{{reference.student_name}}</td>
-              <td>{{reference.referee_name}}</td>
-              <td>
-               <a href="{{url_for('references.view_reference_project', reference_id = reference.id)}}" class="btn btn-success btn-sm" role="button"><i class="fa fa-folder-open"></i> Open Project</a>
-               <a href="{{url_for('references.view_completed_reference', reference_id = reference.id)}}" class="btn btn-primary btn-sm" role="button"><i class="fa fa-user-edit"></i> View</a>
-               <a href="{{url_for('references.view_statement_pdf', reference_id = reference.id)}}" class="btn btn-secondary btn-sm" role="button"><i class="fa fa-file-pdf"></i> PDF</a>
-               <a href="{{url_for('references.archive_reference_project', reference_id = reference.id)}}" <button class="btn btn-sm btn-outline-secondary"><i class="fa fa-archive"></i> Archive </button></a>
-               <a href="{{url_for('references.delete_reference_project', reference_id = reference.id)}}" class="btn btn-danger btn-sm" role="button"><i class="fa fa-user-times"></i> Delete</a>           
-              </td>
-            </tr>
-           {% endfor %}
-          </tbody>
-          <tfoot>
-            <tr>
-            </tr>
-          </tfoot>
+                    <!--end of col-->
+                    <div class="col">
+                        <input id="myInput" class="form-control form-control-lg form-control-borderless" type="search"
+                            placeholder="Search for students or references">
+                    </div>
+                    <!--end of col-->
+                </div>
+            </form>
+        </div>
+        <!--end of col-->
+    </div>
+    <br>
+    <h3>Student references</h3>
+    <div class="table-responsive">
+        <table summary="User references table" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Referee</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="searchableTable">
+                {% for reference in references %}
+                <tr>
+                    <td>{{reference.student_name}}</td>
+                    <td>{{reference.referee_name}}</td>
+                    <td>
+                        <a href="{{url_for('references.view_reference_project', reference_id = reference.id)}}"
+                            class="btn btn-success btn-sm" role="button"><i class="fa fa-folder-open"></i> Open
+                            Project</a>
+                        <a href="{{url_for('references.view_completed_reference', reference_id = reference.id)}}"
+                            class="btn btn-primary btn-sm" role="button"><i class="fa fa-user-edit"></i> View</a>
+                        <a href="{{url_for('references.view_statement_pdf', reference_id = reference.id)}}"
+                            class="btn btn-secondary btn-sm" role="button"><i class="fa fa-file-pdf"></i> PDF</a>
+                        <a href="{{url_for('references.archive_reference_project', reference_id = reference.id)}}"
+                            <button class="btn btn-sm btn-outline-secondary"><i class="fa fa-archive"></i> Archive
+                            </button></a>
+                        <a href="{{url_for('references.delete_reference_project', reference_id = reference.id)}}"
+                            class="btn btn-danger btn-sm" role="button"><i class="fa fa-user-times"></i> Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                </tr>
+            </tfoot>
         </table>
-      </div><!--end of .table-responsive-->
+    </div>
+    <!--end of .table-responsive-->
 
 
-  </div>
-   
- 
+</div>
+
+
 
 {% endblock %}
-</div>
 {% endblock %}
